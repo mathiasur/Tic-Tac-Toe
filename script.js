@@ -36,6 +36,17 @@ const Player = (mark) => {
 
 const displayController = (function () {
 
+  const toggleMenu = function () {
+    const $gameMode = document.querySelector("#game-mode").value;
+    const $difficulty = document.querySelector("#difficulty");
+
+    if ($gameMode === "vs-player") {
+      $difficulty.style = "display: none";
+    } else {
+      $difficulty.style = "display: flex";
+    }
+  };
+
   const player1 = Player("x");
   const player2 = Player("o");
   const board = Gameboard.board;
@@ -81,9 +92,13 @@ const displayController = (function () {
   return {
     managePlayerTurns,
     checkWin,
+    toggleMenu,
   }
 
 })();
+
+
+
 
 let clickCounter = 0;
 
@@ -96,8 +111,12 @@ document.addEventListener("click", (e) => {
 
     clickCounter += 1;
     displayController.managePlayerTurns(element, clickCounter);
-    console.log(displayController.checkWin());
-  
+    displayController.checkWin();
+
+  }
+
+  if (element.id === "game-mode") {
+    displayController.toggleMenu();
   }
 
 });

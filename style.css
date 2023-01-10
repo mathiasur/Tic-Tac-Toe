@@ -60,7 +60,7 @@ select {
     color: #3e9c7d;
 }
 
-#dificulty {
+#difficulty {
     display: none;
     justify-self: flex-end;
 }
