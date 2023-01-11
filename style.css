@@ -112,3 +112,7 @@ select {
     height: calc(100vh - 100px);
     z-index: 10;
 }
+
+.displayCover {
+    display: flex;
+}

@@ -32,11 +32,21 @@ const Gameboard = (function () {
     });
   }
 
+  const displayCover = function (display) {
+    const $cover = document.querySelector(".cover");
+    if (display === true) {
+      $cover.classList.add("displayCover");
+    } else {
+      $cover.classList.remove("displayCover");
+    }
+  }
+
   return {
     board,
     showMark,
     increaseMarkSize,
     resetBoard,
+    displayCover,
   }
 
 })();
@@ -118,8 +128,7 @@ const displayController = (function () {
 
   const checkWin = function () {
     if (_win()) {
-      const $cover = document.querySelector(".cover");
-      $cover.style = "display: flex";
+      Gameboard.displayCover(true);
       const row = _win();
       row.map(spot => {
         Gameboard.increaseMarkSize(spot);
@@ -151,6 +160,7 @@ document.addEventListener("click", (e) => {
   }
 
   if (element.id === "game-mode") {
+    Gameboard.displayCover(false);
     displayController.toggleMenu();
     Gameboard.resetBoard();
     clickCounter = 0;
