@@ -19,11 +19,12 @@ const Gameboard = (function () {
 
 })();
 
+// player factory
 const Player = (mark) => {
 
-  const play = function (board, id) {
-    if (typeof board[id] === "number") {
-      return board[id] = mark;
+  const play = function (arr, id) {
+    if (typeof arr[id] === "number") {
+      return arr[id] = mark;
     }
   };
 
@@ -36,10 +37,23 @@ const Player = (mark) => {
 
 const displayController = (function () {
 
+  const player1 = Player("x");
+  const player2 = Player("o");
+  const board = Gameboard.board;
+
+  const resetBoard = function() {
+    const $spots = document.querySelectorAll(".spot");
+    $spots.forEach( (spot, i) => {
+      if (spot.hasChildNodes()) {
+        spot.removeChild(spot.lastChild);
+      }
+      board[i] = i;
+    });
+  }
+  
   const toggleMenu = function () {
     const $gameMode = document.querySelector("#game-mode").value;
     const $difficulty = document.querySelector("#difficulty");
-
     if ($gameMode === "vs-player") {
       $difficulty.style = "display: none";
     } else {
@@ -47,18 +61,17 @@ const displayController = (function () {
     }
   };
 
-  const player1 = Player("x");
-  const player2 = Player("o");
-  const board = Gameboard.board;
-
   const managePlayerTurns = function (element, clickCounter) {
-
+    const $gameMode = document.querySelector("#game-mode").value;
+    // odd clicks = player1 turn
     if (clickCounter % 2 != 0) {
       player1.play(board, element.id);
       Gameboard.showMark(element.id, player1.mark);
     } else {
-      player2.play(board, element.id);
-      Gameboard.showMark(element.id, player2.mark);
+      if ($gameMode === "vs-player") {
+        player2.play(board, element.id);
+        Gameboard.showMark(element.id, player2.mark);
+      } 
     }
 
   }
@@ -68,37 +81,35 @@ const displayController = (function () {
     for (let spot = 0; spot <= 6; spot += 3) {
       if (board[spot] === board[spot + 1] &&
         board[spot] === board[spot + 2]) {
-        return true;
+        return [spot, (spot + 1), (spot + 2)];
       }
     }
     // check vertical lines
     for (let spot = 0; spot <= 2; spot++) {
       if (board[spot] === board[spot + 3] &&
         board[spot] === board[spot + 6]) {
-        return true;
+          return [spot, (spot + 3), (spot + 6)];
       }
     }
     // check diagonals
     if (board[0] === board[4] &&
       board[0] === board[8]) {
-      return true;
+      return [0,4,8];
     }
     if (board[2] === board[4] &&
       board[2] === board[6]) {
-      return true;
+      return [2,4,6];
     }
   }
 
   return {
+    resetBoard,
+    toggleMenu,
     managePlayerTurns,
     checkWin,
-    toggleMenu,
   }
 
 })();
-
-
-
 
 let clickCounter = 0;
 
@@ -111,12 +122,14 @@ document.addEventListener("click", (e) => {
 
     clickCounter += 1;
     displayController.managePlayerTurns(element, clickCounter);
-    displayController.checkWin();
+    console.log(displayController.checkWin());
 
   }
 
   if (element.id === "game-mode") {
     displayController.toggleMenu();
+    displayController.resetBoard();
+    clickCounter = 0;
   }
 
 });
