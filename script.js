@@ -22,10 +22,21 @@ const Gameboard = (function () {
 
   }
 
+  const resetBoard = function () {
+    const $spots = document.querySelectorAll(".spot");
+    $spots.forEach((spot, i) => {
+      if (spot.hasChildNodes()) {
+        spot.removeChild(spot.lastChild);
+      }
+      board[i] = i;
+    });
+  }
+
   return {
     board,
     showMark,
     increaseMarkSize,
+    resetBoard,
   }
 
 })();
@@ -51,16 +62,6 @@ const displayController = (function () {
   const player1 = Player("x");
   const player2 = Player("o");
   const board = Gameboard.board;
-
-  const resetBoard = function () {
-    const $spots = document.querySelectorAll(".spot");
-    $spots.forEach((spot, i) => {
-      if (spot.hasChildNodes()) {
-        spot.removeChild(spot.lastChild);
-      }
-      board[i] = i;
-    });
-  }
 
   const toggleMenu = function () {
     const $gameMode = document.querySelector("#game-mode").value;
@@ -127,7 +128,6 @@ const displayController = (function () {
   }
 
   return {
-    resetBoard,
     toggleMenu,
     managePlayerTurns,
     checkWin,
@@ -152,7 +152,7 @@ document.addEventListener("click", (e) => {
 
   if (element.id === "game-mode") {
     displayController.toggleMenu();
-    displayController.resetBoard();
+    Gameboard.resetBoard();
     clickCounter = 0;
   }
 
