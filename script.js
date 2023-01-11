@@ -12,9 +12,20 @@ const Gameboard = (function () {
 
   }
 
+  const increaseMarkSize = function (id) {
+
+    const $spot = document.getElementById(id);
+    const $img = $spot.lastChild;
+    setTimeout(() => {
+      $img.classList.add("win");
+    }, 250);
+
+  }
+
   return {
     board,
     showMark,
+    increaseMarkSize,
   }
 
 })();
@@ -41,16 +52,16 @@ const displayController = (function () {
   const player2 = Player("o");
   const board = Gameboard.board;
 
-  const resetBoard = function() {
+  const resetBoard = function () {
     const $spots = document.querySelectorAll(".spot");
-    $spots.forEach( (spot, i) => {
+    $spots.forEach((spot, i) => {
       if (spot.hasChildNodes()) {
         spot.removeChild(spot.lastChild);
       }
       board[i] = i;
     });
   }
-  
+
   const toggleMenu = function () {
     const $gameMode = document.querySelector("#game-mode").value;
     const $difficulty = document.querySelector("#difficulty");
@@ -71,12 +82,12 @@ const displayController = (function () {
       if ($gameMode === "vs-player") {
         player2.play(board, element.id);
         Gameboard.showMark(element.id, player2.mark);
-      } 
+      }
     }
 
   }
 
-  const checkWin = function () {
+  const _win = function () {
     // check horizontal lines 
     for (let spot = 0; spot <= 6; spot += 3) {
       if (board[spot] === board[spot + 1] &&
@@ -88,17 +99,30 @@ const displayController = (function () {
     for (let spot = 0; spot <= 2; spot++) {
       if (board[spot] === board[spot + 3] &&
         board[spot] === board[spot + 6]) {
-          return [spot, (spot + 3), (spot + 6)];
+        return [spot, (spot + 3), (spot + 6)];
       }
     }
     // check diagonals
     if (board[0] === board[4] &&
       board[0] === board[8]) {
-      return [0,4,8];
+      return [0, 4, 8];
     }
     if (board[2] === board[4] &&
       board[2] === board[6]) {
-      return [2,4,6];
+      return [2, 4, 6];
+    }
+
+    return false;
+  }
+
+  const checkWin = function () {
+    if (_win()) {
+      const $cover = document.querySelector(".cover");
+      $cover.style = "display: flex";
+      const row = _win();
+      row.map(spot => {
+        Gameboard.increaseMarkSize(spot);
+      });
     }
   }
 
@@ -122,7 +146,7 @@ document.addEventListener("click", (e) => {
 
     clickCounter += 1;
     displayController.managePlayerTurns(element, clickCounter);
-    console.log(displayController.checkWin());
+    displayController.checkWin();
 
   }
 

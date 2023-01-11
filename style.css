@@ -93,10 +93,22 @@ select {
 }
 
 #x-img {
-    width: 135px;
+    width: 120px;
 }
 
 #o-img {
-    width: 85px;
+    width: 75px;
 }
 
+.win {
+    transition: all 0.5s;
+    transform: scale(1.5);
+}
+
+.cover{
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - 100px);
+    z-index: 10;
+}
